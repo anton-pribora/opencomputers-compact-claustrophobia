@@ -1,2 +1,44 @@
-# opencomputers-compact-claustrophobia
-Скрипты для мода OpenComputers для прохождения сборки Compact Claustrophobia
+# Автоматизация ручного труда в Compact Claustrophobia
+
+Для работы требуется робот *(а лучше два или три)* следующей конфигурации:
+
+* Computer Case Tier 2
+* Inventory Upgrade
+* Inventory Controller Upgrade
+* Screen Tier 1
+* Keyboard
+* Graphics Card Tier 1
+* CPU Tier 1
+* Memory Tier 1 x 2
+* EEPROM (LUA)
+* HDD Tier 1
+* Disk Drive (опционально; для начальной установки системы)
+* Upgrade Container Tier 2 (опционально; в дальнейшем можно установить Angel Upgrade)
+
+![Robot](robot.png)
+
+Обратите внимание, что если у робота нет загрузочного устройства, то работать он не сможет. 
+
+## Автоматизация Field Projector
+
+Установите Charger и робота согласно схеме:
+
+1. Charger должен находиться в двух блоках слева от левого верхнего угла рабочей зоны проекторов.
+2. Робот должен смотреть в сторону Charger и находиться в одном блоке от рабочей зоны.
+
+![Builder](builder/builder_scheme.png)
+
+Скопируйте [один из скриптов](builder/) с постройкой в буфер обмена, включите робота и в терминале напишите:
+
+```bash
+cat > my_script.lua
+```
+
+Затем нажмите клавишу `Insert`, чтобы вставить текст программы. Как только вставка закончится, нажмите 
+`Ctrl + D`, чтобы завершить операцию. После этого можно запускать программу:
+
+```
+./my_script.lua 20
+```
+
+Где `20` - количество повторений постройки.
