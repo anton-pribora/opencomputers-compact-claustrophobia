@@ -1,4 +1,4 @@
--- WITHER SKELETION SKULL 5x5
+-- WITHER SKELETON SKULL 5x5
 
 local materials = {
   ['#'] = ':coal_block',
