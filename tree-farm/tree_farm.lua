@@ -95,7 +95,6 @@ end
 -- Steps
 local begin = {
   robot.turnAround,
-  robot.swingUp, robot.up,
   forward, chopTree, plant,
 }
 
@@ -112,7 +111,7 @@ local plantingAndChopping = {
   robot.turnRight,
   forward, chopTree, plant,
   forward, chopTree, plant,
-  forward, robot.down,
+  forward,
 }
 
 local dumpingAndWatering = {
@@ -124,6 +123,7 @@ local dumpingAndWatering = {
   robot.turnRight,
   robot.swingUp, robot.up,
   dumpSaplings,
+  robot.swingDown, robot.down,
   robot.turnAround,
   forward, chopTree, plant,
   water,
