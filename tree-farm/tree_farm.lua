@@ -26,28 +26,6 @@ local function selectSlot(material)
   end
 end
 
-local function dump(material)
-  local side = 3  -- Always dump to the front
-  local slot = 1  -- Always dump to the first slot of the outside inventory
-
-  while selectSlot(material) do
-    inventory.dropIntoSlot(side, slot)
-  end
-end
-
-local function dumpWood()
-  dump(":log")
-end
-
-local function dumpApples()
-  dump(":apple")
-end
-
-local function dumpSaplings()
-  dump(":sapling")
-  robot.suck(9)
-end
-
 local function plant()
   if selectSlot(":sapling") then
     robot.placeDown()
@@ -58,22 +36,16 @@ local function chopTree()
   local _, block = robot.detectDown()
 
   if block == "solid" then
+    if not robot.durability() and selectSlot(':*axe') then
+      inventory.equip()
+    end
+
     robot.swingDown()
     robot.swingUp()
     robot.up()
     robot.swingUp()
     robot.swingDown()
     robot.down()
-  end
-end
-
-local function fillWateringCan()
-  robot.use()
-end
-
-local function water()
-  for _ = 1, 20 do
-    robot.useDown()
   end
 end
 
@@ -86,6 +58,49 @@ local function forward()
   end
 end
 
+local function goChopAndPlant()
+  forward()
+  chopTree()
+  plant()
+end
+
+local function fillWateringCan()
+  if selectSlot(':watering_can') then
+    inventory.equip()
+    robot.turnLeft()
+    robot.use()
+    robot.turnRight()
+    inventory.equip()
+  end
+end
+
+local function watering()
+  if selectSlot(':watering_can') then
+    inventory.equip()
+    for _ = 1, 20 do
+      robot.useDown()
+    end
+    inventory.equip()
+  end
+end
+
+local function dumpResources()
+  for slot = minSlot, maxSlot do
+    local info = inventory.getStackInInternalSlot(slot)
+
+    if info and not (info.name:find(':*axe') or info.name:find(':watering_can')) then
+      robot.select(slot)
+      robot.dropDown()
+    end
+  end
+end
+
+local function takeSaplings()
+  robot.down()
+  inventory.suckFromSlot(3, 1, 24)
+  robot.up()
+end
+
 local function run(steps)
   for _, step in pairs(steps) do
     step();
@@ -93,51 +108,51 @@ local function run(steps)
 end
 
 -- Steps
-local begin = {
+local steps = {
   robot.turnAround,
-  forward, chopTree, plant,
-}
-
-local plantingAndChopping = {
-  forward, chopTree, plant,
-  forward, chopTree, plant,
-  robot.turnLeft,
-  forward, chopTree, plant,
-  robot.turnLeft,
-  forward, chopTree, plant,
-  forward, chopTree, plant,
+  goChopAndPlant,
+  goChopAndPlant,
+  goChopAndPlant,
+  goChopAndPlant,
+  goChopAndPlant,
+  robot.turnLeft, goChopAndPlant, robot.turnLeft,
+  goChopAndPlant,
+  goChopAndPlant,
+  goChopAndPlant,
+  goChopAndPlant,
+  robot.turnRight, goChopAndPlant, robot.turnRight,
+  goChopAndPlant,
+  goChopAndPlant,
+  watering,
+  goChopAndPlant,
+  goChopAndPlant,
+  dumpResources,
+  takeSaplings,
+  robot.turnLeft, goChopAndPlant, robot.turnLeft,
+  goChopAndPlant,
+  goChopAndPlant,
+  goChopAndPlant,
+  goChopAndPlant,
+  robot.turnRight, goChopAndPlant, robot.turnRight,
+  goChopAndPlant,
+  goChopAndPlant,
+  goChopAndPlant,
+  goChopAndPlant,
   robot.turnRight,
-  forward, chopTree, plant,
+  goChopAndPlant,
+  goChopAndPlant,
+  goChopAndPlant,
+  goChopAndPlant,
   robot.turnRight,
-  forward, chopTree, plant,
-  forward, chopTree, plant,
+  goChopAndPlant,
+  goChopAndPlant,
+  goChopAndPlant,
+  goChopAndPlant,
   forward,
-}
-
-local dumpingAndWatering = {
-  dumpWood,
-  robot.turnRight,
-  dumpApples,
-  robot.turnAround,
   fillWateringCan,
-  robot.turnRight,
-  robot.swingUp, robot.up,
-  dumpSaplings,
-  robot.swingDown, robot.down,
-  robot.turnAround,
-  forward, chopTree, plant,
-  water,
 }
-
--- Equip a watering can if we have it in the inventory
-if selectSlot(':watering_can') then
-  inventory.equip()
-end
 
 -- Main cycle
 repeat
-  run(begin)
-  run(plantingAndChopping)
-  run(dumpingAndWatering)
-  run(plantingAndChopping)
+  run(steps)
 until event.pull(3, "interrupted")
