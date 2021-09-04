@@ -7,6 +7,33 @@ local inventory = component.inventory_controller
 local minSlot   = 1
 local maxSlot   = robot.inventorySize()
 
+local function forward()
+  local result = robot.forward()
+
+  while not result do
+    robot.swing()
+    result = robot.forward()
+  end
+end
+
+local function up()
+  local result = robot.up()
+
+  while not result do
+    robot.swingUp()
+    result = robot.up()
+  end
+end
+
+local function down()
+  local result = robot.down()
+
+  while not result do
+    robot.swingDown()
+    result = robot.down()
+  end
+end
+
 local function selectSlot(material)
   local startSlot = robot.select()
 
@@ -41,20 +68,9 @@ local function chopTree()
     end
 
     robot.swingDown()
+    up()
     robot.swingUp()
-    robot.up()
-    robot.swingUp()
-    robot.swingDown()
-    robot.down()
-  end
-end
-
-local function forward()
-  local result = robot.forward()
-
-  while not result do
-    robot.swing()
-    result = robot.forward()
+    down()
   end
 end
 
@@ -96,9 +112,9 @@ local function dumpResources()
 end
 
 local function takeSaplings()
-  robot.down()
+  down()
   inventory.suckFromSlot(3, 1, 24)
-  robot.up()
+  up()
 end
 
 local function run(steps)
