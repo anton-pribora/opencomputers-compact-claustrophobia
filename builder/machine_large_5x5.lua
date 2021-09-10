@@ -1,4 +1,4 @@
--- COMPACT MACHINE: NORMAL 5x5
+-- COMPACT MACHINE: LARGE 5x5
 
 local materials = {
   ['#'] = ':wall',
